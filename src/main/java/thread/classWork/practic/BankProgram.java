@@ -20,9 +20,9 @@ public class BankProgram {
 
         for (int i =0; i < 50; i++){
             Thread client = new Thread(()->{
+                System.out.println("all amount before-> "+allAmount(list));
                 for (int j =0; j < 100; j++){
                     try {
-                        System.out.println("all amount before-> "+allAmount(list));
                         long amount = random.nextLong(100,1000);
                         int fIdx = random.nextInt(list.size());
                         int toIdx = random.nextInt(list.size());
@@ -38,12 +38,13 @@ public class BankProgram {
                         service.transfer(from,to,amount);
                         Thread.sleep(10);
 
-                        System.out.println("all amount after transfer-> "+allAmount(list));
+
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
                     }
                 }
+                System.out.println("all amount after transfer-> "+allAmount(list));
             });
             client.start();
 

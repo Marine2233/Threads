@@ -17,6 +17,7 @@ public class LoadMonitor implements Runnable {
         while (running && !Thread.currentThread().isInterrupted()) {
             for(BankAccount bankAccount : bankAccounts) {
                 if (stop()){
+                    Thread.currentThread().interrupt();
                     break;
                 }
                 System.out.println("Account: " + bankAccount.getId());
