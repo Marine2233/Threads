@@ -3,8 +3,8 @@ package thread.classWork.practic;
 import java.util.LinkedList;
 
 public class LoadMonitor implements Runnable {
-    private LinkedList<BankAccount>bankAccounts;
-    private volatile boolean running;
+    private LinkedList<BankAccount> bankAccounts;
+    private volatile boolean running =true;
     public LoadMonitor(LinkedList<BankAccount>bankAccountList){
         this.bankAccounts = bankAccountList;
     }
@@ -16,13 +16,16 @@ public class LoadMonitor implements Runnable {
 
         while (running && !Thread.currentThread().isInterrupted()) {
             for(BankAccount bankAccount : bankAccounts) {
-
+                if (stop()){
+                    break;
+                }
                 System.out.println("Account: " + bankAccount.getId());
                 System.out.println("Lock queue: " + bankAccount.getWaitingThreadsCount());
                 String overload = bankAccount.is0verloaded() ? "Overload" : "OK";
                 System.out.println(overload);
                 System.out.println();
             }
+            stop();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -30,7 +33,7 @@ public class LoadMonitor implements Runnable {
             }
         }
     }
-    private void stop(){
-        running = false;
+    private boolean stop(){
+        return running = false;
     }
 }

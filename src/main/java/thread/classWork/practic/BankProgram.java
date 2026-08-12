@@ -17,6 +17,7 @@ public class BankProgram {
         loadMonitor.start();
 
 
+
         for (int i =0; i < 50; i++){
             Thread client = new Thread(()->{
                 for (int j =0; j < 100; j++){
@@ -35,7 +36,7 @@ public class BankProgram {
 
                         System.out.println(Thread.currentThread().getName()+ " from: "+ from +" to: "+to);
                         service.transfer(from,to,amount);
-                        Thread.sleep(50);
+                        Thread.sleep(10);
 
                         System.out.println("all amount after transfer-> "+allAmount(list));
                     } catch (InterruptedException e) {
