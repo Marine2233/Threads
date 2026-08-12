@@ -1,6 +1,3 @@
-
-
-
 package thread.HWSynchronizedAtomicVars.prodCons;
 
 public class BufferMain {
@@ -23,7 +20,7 @@ public class BufferMain {
 
         Thread cons = new Thread(()->{
             try {
-                while (true) {
+                while (!queue.getQueue().isEmpty()) {
                     Integer val = queue.remove();
                     System.out.println("Consumer thread val-> " + val);
                     if (val == -1) {

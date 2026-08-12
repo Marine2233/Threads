@@ -1,5 +1,7 @@
 package thread.HWSynchronizedAtomicVars.prodCons;
 
+import lombok.Getter;
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BoundedBuffer<T> {
+
     private Queue<T> queue;
 
     private int capacity;
@@ -76,5 +79,22 @@ public class BoundedBuffer<T> {
             }
         }
         return -1;
+    }
+
+    public Queue<T>getQueue(){
+        boolean isLock = false;
+        try{
+            isLock = lock.tryLock(100,TimeUnit.MILLISECONDS);
+            if (isLock){
+                return queue;
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }finally {
+            if (isLock){
+                lock.unlock();
+            }
+        }
+        return null;
     }
 }
