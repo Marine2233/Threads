@@ -45,6 +45,10 @@ public class BankProgram {
                     }
                 }
                 System.out.println("all amount after transfer-> "+allAmount(list));
+
+
+
+
             });
             client.start();
 

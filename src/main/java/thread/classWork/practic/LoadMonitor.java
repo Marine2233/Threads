@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class LoadMonitor implements Runnable {
     private LinkedList<BankAccount> bankAccounts;
-    private volatile boolean running =true;
+    private volatile boolean running = true;
     public LoadMonitor(LinkedList<BankAccount>bankAccountList){
         this.bankAccounts = bankAccountList;
     }
