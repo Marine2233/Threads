@@ -1,37 +1,97 @@
 package thread.classWork;
 
+import java.util.concurrent.CountDownLatch;
+
 public class Main {
     public static void main(String[] args) {
 
-        Thread high =
-                new Thread(() -> {
+                CountDownLatch latch =
+                        new CountDownLatch(3);
 
-                    for(int i=0;i<10;i++){
+                Thread database = new Thread(() -> {
 
-                        System.out.println("HIGH");
-
+                    try {
+                        System.out.println("Подключаем БД...");
+                        Thread.sleep(2000);
+                        System.out.println("БД подключена");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } finally {
+                        latch.countDown();
                     }
-
                 });
 
-        Thread low =
-                new Thread(() -> {
+                Thread cache = new Thread(() -> {
 
-                    for(int i=0;i<10;i++){
-
-                        System.out.println("LOW");
-
+                    try {
+                        System.out.println("Загружаем кэш...");
+                        Thread.sleep(1500);
+                        System.out.println("Кэш загружен");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } finally {
+                        latch.countDown();
                     }
-
                 });
 
-        high.setPriority(10);
+                Thread configuration = new Thread(() -> {
 
-        low.setPriority(1);
+                    try {
+                        System.out.println("Загружаем настройки...");
+                        Thread.sleep(1000);
+                        System.out.println("Настройки загружены");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } finally {
+                        latch.countDown();
+                    }
+                });
 
-        high.start();
+                database.start();
+                cache.start();
+                configuration.start();
 
-        low.start();
+                System.out.println("Main ждёт");
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Все компоненты готовы");
+                System.out.println("Приложение запускается");
+            }
+//
+//        Thread high =
+//                new Thread(() -> {
+//
+//                    for(int i=0;i<10;i++){
+//
+//                        System.out.println("HIGH");
+//
+//                    }
+//
+//                });
+//
+//        Thread low =
+//                new Thread(() -> {
+//
+//                    for(int i=0;i<10;i++){
+//
+//                        System.out.println("LOW");
+//
+//                    }
+//
+//                });
+//
+//        high.setPriority(10);
+//
+//        low.setPriority(1);
+//
+//        high.start();
+//
+//        low.start();
 
 //        Printer printer = new Printer();
 //
@@ -117,4 +177,4 @@ public class Main {
 //        );
 //    }
     }
-}
+
