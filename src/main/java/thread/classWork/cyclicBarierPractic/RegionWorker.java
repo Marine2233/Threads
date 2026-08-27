@@ -54,7 +54,7 @@ public class RegionWorker implements Runnable{
 
         try {
             Thread.sleep(1000);
-            System.out.println("Второй этап: Подсчет расходов.");
+            System.out.println("Второй этап: Подсчет расходов." + Thread.currentThread().getName());
             synchronized (monitorExpenses) {
                 while (idx < regionSize) {
                     expenses[idx] = random.nextInt(600_000, 10_000_000);
@@ -69,7 +69,7 @@ public class RegionWorker implements Runnable{
 
             try {
                 barrier.await();
-                System.out.println("Подсчет расходов окончен.");
+                System.out.println("Подсчет расходов окончен." + Thread.currentThread().getName());
             } catch (BrokenBarrierException e) {
                 throw new RuntimeException(e);
             } catch (InterruptedException e) {
@@ -80,7 +80,7 @@ public class RegionWorker implements Runnable{
 
     public void calculateRevenue(){
         int idx = 0;
-        System.out.println("Первый этап: Расчет прибыли.");
+        System.out.println("Первый этап: Расчет прибыли." + Thread.currentThread().getName());
         try {
                 synchronized (monitorRevenue) {
                     Thread.sleep(2000);
@@ -96,7 +96,7 @@ public class RegionWorker implements Runnable{
 
         try {
             barrier.await();
-            System.out.println("Расчет прибыли окончен.");
+            System.out.println("Расчет прибыли окончен." +Thread.currentThread().getName());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
