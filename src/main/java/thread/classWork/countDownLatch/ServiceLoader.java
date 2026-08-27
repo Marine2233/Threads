@@ -1,4 +1,4 @@
-package thread.classWork.countGownLatch;
+package thread.classWork.countDownLatch;
 
 
 import lombok.Getter;
