@@ -18,10 +18,8 @@ public class RegionWorker implements Runnable{
     private long totalProfit;
     private Lock lock = new ReentrantLock();
 
-
-
-
     public RegionWorker(CyclicBarrier barrier) {
+
         this.barrier = barrier;
         this.totalRevenue = new long[4];
         this.expenses = new long[4];
@@ -29,17 +27,9 @@ public class RegionWorker implements Runnable{
 
     @Override
     public void run() {
-
-
-            System.out.println("Первый этап: Расчет прибыли.");
             calculateRevenue();
-
-            System.out.println("Второй этап: Подсчет расходов.");
             calculateExpenses();
-
-            System.out.println("Профит составил: "+calculateProfit());
-
-
+        System.out.println("Профит  составил: "+calculateProfit());
     }
 
     public long calculateProfit(){
@@ -56,41 +46,45 @@ public class RegionWorker implements Runnable{
         }finally {
             lock.unlock();
         }
+
     }
 
     public void calculateExpenses() {
-        int idx =0;
+        int idx = 0;
 
-        synchronized (monitorExpenses) {
-            try {
-                Thread.sleep(1000);
-                while (idx < 4) {
+        try {
+            Thread.sleep(1000);
+            System.out.println("Второй этап: Подсчет расходов.");
+            synchronized (monitorExpenses) {
+                while (idx < regionSize) {
                     expenses[idx] = random.nextInt(600_000, 10_000_000);
                     idx++;
                 }
+            }
+        }catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(ex);
+        }
 
+
+            try {
+                barrier.await();
+                System.out.println("Подсчет расходов окончен.");
+            } catch (BrokenBarrierException e) {
+                throw new RuntimeException(e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
         }
 
-        try {
-            barrier.await();
-        } catch (BrokenBarrierException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
     public void calculateRevenue(){
         int idx = 0;
+        System.out.println("Первый этап: Расчет прибыли.");
         try {
                 synchronized (monitorRevenue) {
                     Thread.sleep(2000);
-                   while (idx < 4){
+                   while (idx < regionSize){
                        totalRevenue[idx] = random.nextInt(400_000,5_000_000);
                        idx++;
                    }
@@ -102,6 +96,7 @@ public class RegionWorker implements Runnable{
 
         try {
             barrier.await();
+            System.out.println("Расчет прибыли окончен.");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
