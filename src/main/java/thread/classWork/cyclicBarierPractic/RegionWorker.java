@@ -24,7 +24,7 @@ public class RegionWorker implements Runnable{
     public RegionWorker(CyclicBarrier barrier) {
         this.barrier = barrier;
         this.totalRevenue = new long[4];
-        this.expenses = expenses = new long[4];
+        this.expenses = new long[4];
     }
 
     @Override
