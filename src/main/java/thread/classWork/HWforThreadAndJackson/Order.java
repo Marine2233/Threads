@@ -1,5 +1,9 @@
 package thread.classWork.HWforThreadAndJackson;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Order {
     private long id;
+    @JsonAlias({"customer_name","customer","name"})
+    @JsonSetter(nulls = Nulls.FAIL)
     private String customer;
     private long price;
     private OrderStatus status;
