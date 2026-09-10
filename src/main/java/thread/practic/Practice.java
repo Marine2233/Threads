@@ -27,8 +27,6 @@ public class Practice {
             m.stop();
             monitor.interrupt();
 
-
-
         }
     public static List<Document> generateDocuments(int count) {
         List<Document> list = new ArrayList<>();
