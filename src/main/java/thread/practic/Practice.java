@@ -24,7 +24,6 @@ public class Practice {
                 Thread.onSpinWait();
             }
 
-
             m.stop();
             monitor.interrupt();
 
