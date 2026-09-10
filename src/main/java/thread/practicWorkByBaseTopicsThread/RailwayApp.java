@@ -64,7 +64,6 @@ public class RailwayApp {
                     String type = types[random.nextInt(types.length)];
                     int pass = type.equals("CARGO") ? 0 : random.nextInt(150, 600);
 
-                    // Строка сформирована строго по названиям полей вашего класса Train
                     String json = String.format(
                             "{\"id\":%d,\"number\":\"R-%d\",\"type\":\"%s\",\"passengersAll\":%d,\"status\":\"CREATED\"}",
                             random.nextInt(1, 999999), random.nextInt(100, 999), type, pass

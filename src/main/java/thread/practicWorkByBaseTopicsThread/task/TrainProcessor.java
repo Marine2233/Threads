@@ -68,9 +68,9 @@ public class TrainProcessor implements Runnable {
                         station.getStatistics().trainProcessed();
                         station.getStatistics().addPassengers(train,120);
                         try {
-                            barrier.await(5,TimeUnit.SECONDS);
+                            barrier.await(6,TimeUnit.SECONDS);
                         } catch (InterruptedException | TimeoutException | BrokenBarrierException e) {
-
+                            System.out.println("Группа поездов не состоялась.");
                         }
                         train.finishService();
                         train.depart();
@@ -105,7 +105,7 @@ public class TrainProcessor implements Runnable {
                             station.getStatistics().trainProcessed();
                             Thread.sleep(2000);
                             try {
-                                barrier.await(5,TimeUnit.SECONDS);
+                                barrier.await(6,TimeUnit.SECONDS);
                             } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
 
                             }
