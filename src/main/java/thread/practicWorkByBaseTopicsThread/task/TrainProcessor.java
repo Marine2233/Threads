@@ -107,7 +107,7 @@ public class TrainProcessor implements Runnable {
                             try {
                                 barrier.await(6,TimeUnit.SECONDS);
                             } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
-
+                                barrier.reset();
                             }
                             train.finishService();
                             train.depart();

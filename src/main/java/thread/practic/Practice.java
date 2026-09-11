@@ -6,6 +6,7 @@ import java.util.concurrent.Phaser;
 
 public class Practice {
         public static void main(String[] args) {
+
             Phaser phaser = new Phaser(1);
             ProcessingStatistics statistics = new ProcessingStatistics();
             List<Document>documents = generateDocuments(10);
