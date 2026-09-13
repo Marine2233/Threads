@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 @Getter
 public class WarehouseWorker implements Runnable{
@@ -18,6 +19,7 @@ public class WarehouseWorker implements Runnable{
     private WarehouseStatistic statistic;
     private int quantity;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final StampedLock stampedLock = new StampedLock();
     private final Lock readLock = lock.readLock();
     private final Lock writeLock = lock.writeLock();
     private final Exchanger<ProductBatch> exchanger;
@@ -42,12 +44,17 @@ public class WarehouseWorker implements Runnable{
         while (isTrue && !Thread.currentThread().isInterrupted()) {
             List<ProductBatch> copy;
 
-            readLock.lock();
-            try {
-                copy = new ArrayList<>(batches);
-            }finally {
-                readLock.unlock();
-            }
+           long stamp =  stampedLock.tryOptimisticRead();
+           copy = new ArrayList<>(batches);
+
+           if (!stampedLock.validate(stamp)) {
+               stamp = stampedLock.readLock();
+               try {
+                   copy = new ArrayList<>(batches);
+               } finally {
+                   stampedLock.unlockRead(stamp);
+               }
+           }
 
             for (ProductBatch batch: copy) {
 
