@@ -2,7 +2,7 @@ package thread.phaserExchanger;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Exchanger;
+import java.util.concurrent.*;
 
 public class WarehouseApp {
     public static void main(String[] args) {
@@ -17,14 +17,17 @@ public class WarehouseApp {
 
         WarehouseStatistic statistic = new WarehouseStatistic();
 
-        Thread thread = new Thread(new Monitor(statistic));
-        thread.setDaemon(true);
-        thread.start();
-
         WarehouseWorker taskWorker = new WarehouseWorker(statistic,count,batchesForWarehouse1,exchanger);
         WarehouseWorker taskWorker2 = new WarehouseWorker(statistic,quantity,batchesForWarehouse2,exchanger);
 
-        Thread addedWarehouse = new Thread(()->{
+        ScheduledExecutorService demonService = Executors.newScheduledThreadPool(2, run->{
+            Thread thread1 = new Thread(run);
+            thread1.setDaemon(true);
+            return thread1;
+        });
+        demonService.scheduleAtFixedRate(new Monitor(statistic),0,1200, TimeUnit.MICROSECONDS);
+
+        Runnable addedWarehouse = ()->{
 
             int i = 0;
             taskWorker.getReadLock().lock();
@@ -51,22 +54,23 @@ public class WarehouseApp {
                     break;
                 }
             }
-        });
-        addedWarehouse.setDaemon(true);
-        addedWarehouse.start();
+        };
 
-        Thread worker1 = new Thread(taskWorker);
-        Thread worker2 = new Thread(taskWorker2);
+        ExecutorService serviceThreads = Executors.newCachedThreadPool();
+        serviceThreads.submit(taskWorker);
+        serviceThreads.submit(taskWorker2);
+        serviceThreads.submit(addedWarehouse);
 
-        worker1.start();
-        worker2.start();
+        serviceThreads.shutdown();
 
+        boolean isTerminated = false;
         try {
-            worker2.join();
-            worker1.join();
-            Thread.sleep(5000);
+            isTerminated = serviceThreads.awaitTermination(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+        }
+        if (!isTerminated){
+            serviceThreads.shutdownNow();
         }
 
     }
