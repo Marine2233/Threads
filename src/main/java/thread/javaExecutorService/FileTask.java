@@ -1,10 +1,9 @@
-package thread.javaBaseThread;
+package thread.javaExecutorService;
 
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Random;
-import java.util.concurrent.Callable;
 
 @Getter
 @ToString

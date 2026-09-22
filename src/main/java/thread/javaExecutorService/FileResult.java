@@ -1,4 +1,4 @@
-package thread.javaBaseThread;
+package thread.javaExecutorService;
 
 import lombok.Getter;
 import lombok.ToString;

@@ -1,4 +1,4 @@
-package thread.javaBaseThread;
+package thread.javaExecutorService;
 
 public class Monitor implements Runnable{
 

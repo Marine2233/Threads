@@ -1,4 +1,4 @@
-package thread.javaBaseThread;
+package thread.javaExecutorService;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
