@@ -45,7 +45,10 @@ public class Employee implements Runnable{
                         statistic.incAttempts();
                     }
                 }
-            }finally {
+
+
+
+            } finally {
                 if (isLock1room){
                     meetingRoom1.getLock().unlock();
                 }
