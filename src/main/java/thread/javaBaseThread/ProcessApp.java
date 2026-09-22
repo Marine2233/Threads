@@ -29,7 +29,7 @@ public class ProcessApp {
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
                 System.out.println("Suicide task" + r);
                 ProcessingStatistic.incProcessIRejected();
-                ProcessingStatistic.incProcessNotStarted();
+
             }
         });
 /*
@@ -61,7 +61,7 @@ public class ProcessApp {
 
        executor1.shutdown();
         try {
-            if (!executor1.awaitTermination(3, TimeUnit.SECONDS)) {
+            if (!executor1.awaitTermination(2, TimeUnit.SECONDS)) {
                 System.out.println(executor1.shutdownNow());
                 ProcessingStatistic.NOT_STARTED.set(executor1.shutdownNow().size());
 
