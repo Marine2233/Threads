@@ -6,8 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ExamResultApp {
     public static void main(String[] args) {
         List<ExamResult> testData = generateTestData(50_000);
-        Map<Subject, Integer> failed = new HashMap<>();
-
 
         for (int i = 0; i < 3; i++) {
             long startSeq = System.currentTimeMillis();

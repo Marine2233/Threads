@@ -1,6 +1,8 @@
 package thread.practicFJPandCF.analitic;
 
 import lombok.Getter;
+
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -59,32 +61,10 @@ public class Statistic {
                         collect(Collectors.groupingBy(ExamResult::getStudent,
                                 Collectors.groupingBy(ExamResult::getSubject, Collectors.averagingDouble(Statistic::processScore))));
 
-        return isParallel? allMarksAvgStuds.entrySet().parallelStream().filter(studentMapEntry -> {
-            return studentMapEntry.
-                    getValue().
-                    values().
-                    stream().
-                    mapToDouble(Double::doubleValue).
-                    average().
-                    orElse(0)>=90;
-        }).sorted((a,b)->{
-            double avgA = a.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0);
-            double avgB = b.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0);
-            return Double.compare(avgB,avgA);
-        }).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(ex,pr)->ex,LinkedHashMap::new)):
+        var stream = isParallel ? allMarksAvgStuds.entrySet().parallelStream() : allMarksAvgStuds.entrySet().stream();
 
-                allMarksAvgStuds.entrySet().stream().filter(studentMapEntry -> {
-                    return studentMapEntry.
-                            getValue().
-                            values().
-                            stream().
-                            mapToDouble(Double::doubleValue).
-                            average().
-                            orElse(0)>=90;
-                }).sorted((a,b)->{
-                    double avgA = a.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0);
-                    double avgB = b.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0);
-                    return Double.compare(avgB,avgA);
-                }).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(ex,pr)->ex,LinkedHashMap::new));
-    }
+        return stream.filter(marks->
+            marks.getValue().values().stream().allMatch(mark -> mark >= 90)).
+                collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(ex,rp)->ex,LinkedHashMap::new));
+        }
 }
