@@ -32,6 +32,12 @@ public class ProcessApp {
 
             }
         });
+
+        ThreadPoolExecutor executor3 = new ThreadPoolExecutor(2,4,4,TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(4),t->{
+            Thread thread = new Thread(t);
+            return thread;
+        },new ThreadPoolExecutor.CallerRunsPolicy());
 /*
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 2,
