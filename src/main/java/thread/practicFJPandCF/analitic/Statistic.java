@@ -52,7 +52,7 @@ public class Statistic {
     }
 
     public Map<Student, Map<Subject, Double>> topStudent(boolean isParallel) {
-        Map<Student, Map<Subject, Double>> allMarksAvgStuds = isParallel?
+        Map<Student, Map<Subject, Double>> allMarksAvgStuds = isParallel ?
                 results.parallelStream().
                         collect(Collectors.groupingByConcurrent(ExamResult::getStudent,
                                 Collectors.groupingBy(ExamResult::getSubject, Collectors.averagingDouble(Statistic::processScore)))):
@@ -63,8 +63,10 @@ public class Statistic {
 
         var stream = isParallel ? allMarksAvgStuds.entrySet().parallelStream() : allMarksAvgStuds.entrySet().stream();
 
-        return stream.filter(marks->
-            marks.getValue().values().stream().allMatch(mark -> mark >= 90)).
-                collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(ex,rp)->ex,LinkedHashMap::new));
+        return stream.
+                filter(marks-> marks.getValue().values().stream().
+                    allMatch(mark -> mark >= 90)).
+                sorted(Comparator.comparing(el->el.getKey().getName())).
+                collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(ex,rp)->ex, LinkedHashMap::new));
         }
 }
