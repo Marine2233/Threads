@@ -1,69 +1,75 @@
 package thread.CollectionsCuncarrent.model;
-
+import lombok.AllArgsConstructor;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class TicketConsumer implements Runnable {
-    private final BlockingQueue<Ticket> queue;
-    private final BlockingQueue<RetryTicket> reTry;
-    private final EventJournal eventJournal;
+@AllArgsConstructor
+public class TicketConsumer implements Runnable{
+
+    private final EventJournal journal;
+    private final BlockingQueue<Ticket>tickets;
+    private final String name;
     private final SupportStatistics statistics;
-
-    public TicketConsumer(EventJournal eventJournal, BlockingQueue<Ticket> queue, BlockingQueue<RetryTicket> reTry, SupportStatistics statistics) {
-        this.eventJournal = eventJournal;
-        this.queue = queue;
-        this.reTry = reTry;
-        this.statistics = statistics;
-    }
-
+    private final Retry retry;
 
     @Override
     public void run() {
-        Random random = new Random();
-        while (!Thread.currentThread().isInterrupted()){
-            try {
 
-                Ticket ticket = queue.take();
-                if (ticket.getStatus().equals(TicketStatus.CREATED)){
-                    statistics.incCreated();
+        Random random = new Random();
+
+        while (!Thread.currentThread().isInterrupted()){
+
+            try {
+                Ticket ticket = tickets.take();
+
+                if (ticket.getStatus().equals(TicketStatus.WAITING_RETRY)){
+                    statistics.decRetries();
                 }
 
                 ticket.changeStatus(TicketStatus.PROCESSING);
-                statistics.incProcessing();
-
-                eventJournal.add(new SupportEvent("Process ", ticket.getId()));
                 ticket.incrementAttempts();
 
-                Thread.sleep(1000);
+                statistics.incProcessing();
 
-                int cpu = random.nextInt(100);
-                boolean isSuccess = (cpu >= 0 && cpu < 70);
-                boolean isRetry = (cpu >= 70 && cpu < 90);
+                journal.add(new SupportEvent(ticket.getId(),"Process_ticket: " +ticket.getId(),System.currentTimeMillis()));
 
-                if (isSuccess){
+                int resultProcess = random.nextInt(0,101);
+
+                if (resultProcess < 70){
+
                     ticket.changeStatus(TicketStatus.COMPLETED);
                     statistics.incCompleted();
-                    eventJournal.add(new SupportEvent("Completed ", ticket.getId()));
+                    statistics.decProcessing();
+                    journal.add(new SupportEvent(ticket.getId(),"Completed ticket- "+ticket.getId(),System.currentTimeMillis()));
 
-                }else if (isRetry){
+                }else if (resultProcess < 90){
+
+                    statistics.decProcessing();
                     ticket.changeStatus(TicketStatus.WAITING_RETRY);
-                    ticket.incrementAttempts();
                     statistics.incRetries();
-                    eventJournal.add(new SupportEvent("Waiting Retry ", ticket.getId()));
-                    reTry.offer(new RetryTicket(ticket,System.currentTimeMillis()+1500));
+
+                    long retryAt = System.currentTimeMillis()+3000;
+                    retry.addRetryTicket(new RetryTicket(retryAt,ticket));
+                    journal.add(new SupportEvent(ticket.getId(),"Retry ticket- "+ticket.getId(),System.currentTimeMillis()));
+
 
                 }else {
+
                     ticket.changeStatus(TicketStatus.FAILED);
+                    statistics.decProcessing();
                     statistics.incFailed();
-                    eventJournal.add(new SupportEvent("Failed ", ticket.getId()));
+                    journal.add(new SupportEvent( ticket.getId(),"Failed "+ticket.getId(),System.currentTimeMillis()));
+
                 }
 
                 Thread.sleep(1000);
+
+
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
+
         }
     }
 }

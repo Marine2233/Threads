@@ -1,47 +1,40 @@
 package thread.CollectionsCuncarrent.model;
 
+import lombok.AllArgsConstructor;
+
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
 
-public class RetryWorker implements Runnable{
-    private final DelayQueue<RetryTicket> retryQueue;
-    private final BlockingQueue<Ticket> ticketQueue;
-    private final EventJournal journal;
-    private final SupportStatistics statistics;
-
-    public RetryWorker(EventJournal journal, DelayQueue<RetryTicket> retryQueue, BlockingQueue<Ticket> ticketQueue, SupportStatistics statistics) {
-        this.journal = journal;
-        this.retryQueue = retryQueue;
-        this.ticketQueue = ticketQueue;
-        this.statistics = statistics;
-    }
-
+@AllArgsConstructor
+public class RetryWorker implements Runnable {
+    private final Retry retry;
+    private final BlockingQueue<Ticket> tickets;
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()){
+        while (!Thread.currentThread().isInterrupted()) {
             try {
-                RetryTicket ticket = retryQueue.take();
+                RetryTicket ticket = retry.detRetryTicket();
+                Ticket ticket1 = ticket.getTicket();
 
-                Ticket tick = ticket.getTicket();
+                if (ticket1.getAttempts().get() >= 3) {
+                    ticket1.changeStatus(TicketStatus.FAILED);
 
-                if (tick.getAttempts().get() >= 3) {
-                    tick.changeStatus(TicketStatus.FAILED);
-                    journal.add(new SupportEvent("failed", tick.getId()));
-                    statistics.incFailed();
+                } else {
 
-                } else{
-                    tick.changeStatus(TicketStatus.QUEUED);
-                    journal.add(new SupportEvent("Queued", tick.getId()));
-                    ticketQueue.put(tick);
-                    tick.incrementAttempts();
-            }
-            } catch (InterruptedException e) {
+                    try {
+                        ticket1.changeStatus(TicketStatus.QUEUED);
+                        tickets.put(ticket1);
+
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+
+                }
+            }catch(InterruptedException e){
                 Thread.currentThread().interrupt();
                 break;
             }
-
         }
     }
 }
-

@@ -1,41 +1,34 @@
 package thread.CollectionsCuncarrent.model;
 
-import lombok.Getter;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class EventJournal {
-    private final ConcurrentLinkedQueue<SupportEvent> events;
-    @Getter
-    private final AtomicLong eventCount = new AtomicLong(0);
+    private final ConcurrentLinkedQueue<SupportEvent>events;
+    private AtomicLong size = new AtomicLong();
 
     public EventJournal() {
         this.events = new ConcurrentLinkedQueue<>();
     }
 
-    public void add(SupportEvent event){
-        if (event == null){
-            return;
-        }
-        events.offer(event);
-        eventCount.incrementAndGet();
+    public long size(){
+        return size.get();
     }
 
-    public SupportEvent poll(){
-        SupportEvent event = events.poll();
-        if (event != null){
-            eventCount.decrementAndGet();
-        }
-        return event;
-    }
     public SupportEvent peek(){
         return events.peek();
     }
-    public int size(){
-        return (int) eventCount.get();
+
+    public SupportEvent poll(){
+        SupportEvent old = events.poll();
+        if (old!=null) {
+            size.decrementAndGet();
+        }
+       return old;
     }
 
-
-
+    public void add(SupportEvent event){
+        size.incrementAndGet();
+        events.add(event);
+    }
 }

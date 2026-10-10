@@ -1,9 +1,7 @@
 package thread.CollectionsCuncarrent.model;
-
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 @ToString
@@ -12,7 +10,6 @@ public class Ticket implements Comparable<Ticket>{
     private final String customer;
     private final String message;
     private final TicketPriority priority;
-
     private volatile TicketStatus status;
     private final AtomicInteger attempts = new AtomicInteger();
 

@@ -20,45 +20,43 @@ public class TicketRepository {
         this.priorityStatistics = new ConcurrentHashMap<>();
     }
 
-    public void statisticCountCallUserTicket(String customName){
-        ticketsByCustomerStatistic.computeIfAbsent(customName,custom -> new AtomicInteger(0)).incrementAndGet();
-    }
-
-    public void incPriorityCount(Ticket ticket){
+    public void incTicketPriority(Ticket ticket){
         priorityStatistics.merge(ticket.getPriority(),1L,Long::sum);
     }
 
-    public void  StatisticCountCallUserTicket(String custom){
-        ticketsByCustomerStatistic.compute(custom,(k,v)->{
+    public void incrementCustomerTickets(String customer){
+        ticketsByCustomerStatistic.compute(customer,(k,v)->{
             if (v == null){
-                return new AtomicInteger(1);
+               return new AtomicInteger(1);
             }else {
                 v.incrementAndGet();
-                return v;
+               return v;
             }
         });
     }
 
-    public void save(Ticket ticket){
-        tickets.put(ticket.getId(),ticket);
+    public int countUserCallStatistic(String customName){
+       return ticketsByCustomerStatistic.computeIfAbsent(customName,customN-> new AtomicInteger()).incrementAndGet();
     }
 
-    public boolean saveIfAbsent(Ticket ticket){
-       Ticket old =  tickets.putIfAbsent(ticket.getId(),ticket);
-       return old == null;
+    public Map<Long,Ticket>snapshot(){
+        return Map.copyOf(tickets);
     }
 
-    public Ticket find(long id){
-       return tickets.getOrDefault(id,null);
+    public long countByStatus(TicketStatus status){
+        return tickets.values().stream().filter(ticket -> ticket.getStatus().equals(status)).count();
     }
+
     public int size(){
         return tickets.size();
     }
-    public long countByStatus(TicketStatus status){
-        return tickets.values().stream().filter(ticket->ticket.getStatus() == status).count();
+
+    public Ticket find(long id){
+        return tickets.get(id);
     }
-    public Map<Long, Ticket> snapshot() {
-        return Map.copyOf(tickets);
+
+    public void save(Ticket ticket){
+        tickets.putIfAbsent(ticket.getId(),ticket);
     }
 
 }

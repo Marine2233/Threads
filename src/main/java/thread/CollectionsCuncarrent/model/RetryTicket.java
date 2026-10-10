@@ -1,28 +1,25 @@
 package thread.CollectionsCuncarrent.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
-
 @Getter
+
 public class RetryTicket implements Delayed {
-
     private final Ticket ticket;
-    private final long readyAt;
+    private final long retryAt;
 
-    public RetryTicket(Ticket ticket, long readyAt) {
+    public RetryTicket(long retryAt, Ticket ticket) {
+        this.retryAt = retryAt;
         this.ticket = ticket;
-        this.readyAt = readyAt;
-    }
-
-    public boolean isReady() {
-        return System.currentTimeMillis() >= readyAt;
+        ticket.changeStatus(TicketStatus.WAITING_RETRY);
     }
 
     @Override
     public long getDelay(TimeUnit unit) {
-        return unit.convert(readyAt - System.currentTimeMillis(),TimeUnit.MILLISECONDS);
+        long current =  retryAt -System.currentTimeMillis() ;
+        return unit.convert(current,TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -31,7 +28,7 @@ public class RetryTicket implements Delayed {
             return 0;
         }
         if (o instanceof RetryTicket){
-            return Long.compare(readyAt,((RetryTicket) o).readyAt);
+            return Long.compare(this.retryAt,((RetryTicket) o).retryAt);
         }
         return Long.compare(this.getDelay(TimeUnit.MILLISECONDS),o.getDelay(TimeUnit.MILLISECONDS));
     }
