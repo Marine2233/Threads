@@ -1,4 +1,4 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
 import lombok.AllArgsConstructor;
 

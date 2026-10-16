@@ -1,6 +1,5 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;

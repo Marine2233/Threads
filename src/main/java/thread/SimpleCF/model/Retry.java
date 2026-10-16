@@ -1,9 +1,8 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.DelayQueue;
-import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 public class Retry {

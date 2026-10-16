@@ -1,4 +1,4 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

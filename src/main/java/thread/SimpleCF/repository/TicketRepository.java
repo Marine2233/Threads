@@ -1,8 +1,8 @@
-package thread.CollectionsCuncarrent.repository;
+package thread.SimpleCF.repository;
 
-import thread.CollectionsCuncarrent.model.Ticket;
-import thread.CollectionsCuncarrent.model.TicketPriority;
-import thread.CollectionsCuncarrent.model.TicketStatus;
+import thread.SimpleCF.model.Ticket;
+import thread.SimpleCF.model.TicketPriority;
+import thread.SimpleCF.model.TicketStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

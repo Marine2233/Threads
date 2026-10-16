@@ -1,7 +1,7 @@
-package thread.CollectionsCuncarrent;
+package thread.SimpleCF;
 
-import thread.CollectionsCuncarrent.model.*;
-import thread.CollectionsCuncarrent.repository.TicketRepository;
+import thread.SimpleCF.model.*;
+import thread.SimpleCF.repository.TicketRepository;
 
 import java.util.ArrayList;
 import java.util.List;

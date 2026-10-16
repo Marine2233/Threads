@@ -1,6 +1,6 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
-import thread.CollectionsCuncarrent.repository.TicketRepository;
+import thread.SimpleCF.repository.TicketRepository;
 
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;

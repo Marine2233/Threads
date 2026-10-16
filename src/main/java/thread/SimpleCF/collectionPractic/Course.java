@@ -1,4 +1,4 @@
-package thread.CollectionsCuncarrent.collectionPractic;
+package thread.SimpleCF.collectionPractic;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

@@ -1,7 +1,7 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
 import lombok.AllArgsConstructor;
-import thread.CollectionsCuncarrent.repository.TicketRepository;
+import thread.SimpleCF.repository.TicketRepository;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;

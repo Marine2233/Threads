@@ -1,4 +1,4 @@
-package thread.CollectionsCuncarrent.collectionPractic;
+package thread.SimpleCF.collectionPractic;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class CourseRegistry {
 
     private final Map<Long,Student> studentsMap = new HashMap<>();
-    private final Map<String,Course> coursesMap = new HashMap<>();
+    private final Map<String,Course> coursesMap = new TreeMap<>();
     private  final Map<String, Set<Long>> enrollElements = new HashMap<>();
 
     /**
@@ -80,7 +80,7 @@ public class CourseRegistry {
      * @return - список студентов курса
      * */
     public List<Student> students(String courseCode){
-        Set<Long> studs = enrollElements.get(courseCode);
+        Set<Long> studs = enrollElements.getOrDefault(courseCode,Set.of());
 
         return studs.stream().
                 filter(Objects::nonNull).

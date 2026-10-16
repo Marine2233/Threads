@@ -1,4 +1,4 @@
-package thread.CollectionsCuncarrent.model;
+package thread.SimpleCF.model;
 
 public enum TicketStatus {
     CREATED,
