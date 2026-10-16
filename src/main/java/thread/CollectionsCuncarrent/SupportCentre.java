@@ -22,7 +22,8 @@ public class SupportCentre {
         ExecutorService prodCons = Executors.newVirtualThreadPerTaskExecutor();
         ScheduledExecutorService demon = Executors.newScheduledThreadPool(1);
         demon.scheduleWithFixedDelay(new ProcessMonitor
-                (repository,tickets,delayQueue,statistics,journal,new SubscriberRegistry(),50),0,1,TimeUnit.SECONDS);
+                (repository,tickets,delayQueue,statistics,journal,new SubscriberRegistry(),50),
+                0,1,TimeUnit.SECONDS);
 
         RetryWorker retryWorker = new RetryWorker(retryService, tickets);
         prodCons.submit(retryWorker);
